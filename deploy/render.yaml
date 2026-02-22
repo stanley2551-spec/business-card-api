@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: business-card-api
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: OPENAI_API_KEY
+        value: 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
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000

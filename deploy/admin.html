@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Business Card Scanner</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+    
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .card h2 {
+      color: #333;
+      margin-bottom: 16px;
+      font-size: 18px;
+    }
+    
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-box {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .stat-box h3 {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+    
+    .stat-box p {
+      opacity: 0.9;
+    }
+    
+    .btn {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    
+    .btn:hover {
+      background: #2563eb;
+    }
+    
+    .btn-danger {
+      background: #ef4444;
+    }
+    
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+    
+    .btn-success {
+      background: #10b981;
+    }
+    
+    .btn-success:hover {
+      background: #059669;
+    }
+    
+    .input-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    
+    .codes-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    
+    .code-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 13px;
+    }
+    
+    .code-tag.available {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .code-tag.used {
+      background: #fee2e2;
+      color: #991b1b;
+      text-decoration: line-through;
+    }
+    
+    .code-tag button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: inherit;
+      opacity: 0.6;
+    }
+    
+    .code-tag button:hover {
+      opacity: 1;
+    }
+    
+    .subscriptions-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+    
+    .subscriptions-table th,
+    .subscriptions-table td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .subscriptions-table th {
+      font-weight: 600;
+      color: #666;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .status-badge.active {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .status-badge.free {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+    
+    .status-badge.none {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .login-form {
+      max-width: 400px;
+      margin: 100px auto;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .alert.success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .alert.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .new-codes {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 16px;
+    }
+    
+    .new-codes h4 {
+      color: #166534;
+      margin-bottom: 12px;
+    }
+    
+    .new-codes .code-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .new-codes .code-item {
+      background: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 14px;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Login Form -->
+    <div id="loginForm" class="card login-form">
+      <h2>🔐 Admin Login</h2>
+      <p style="color: #666; margin-bottom: 20px;">Enter your Firebase User ID to access the admin panel</p>
+      <div class="input-group">
+        <input type="text" id="userId" class="input" placeholder="User ID">
+      </div>
+      <div class="input-group">
+        <input type="email" id="userEmail" class="input" placeholder="Email (must be owner)">
+      </div>
+      <button class="btn" onclick="login()" style="width: 100%;">Login</button>
+    </div>
+    
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="hidden">
+      <h1>⚙️ Admin Panel</h1>
+      <p class="subtitle">Manage subscriptions and free access codes</p>
+      
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat-box">
+          <h3 id="totalCodes">0</h3>
+          <p>Total Codes</p>
+        </div>
+        <div class="stat-box">
+          <h3 id="usedCodes">0</h3>
+          <p>Used Codes</p>
+        </div>
+        <div class="stat-box">
+          <h3 id="availableCodes">0</h3>
+          <p>Available</p>
+        </div>
+        <div class="stat-box">
+          <h3 id="totalSubs">0</h3>
+          <p>Subscriptions</p>
+        </div>
+      </div>
+      
+      <!-- Generate Codes -->
+      <div class="card">
+        <h2>🎟️ Generate Free Access Codes</h2>
+        <div class="input-group">
+          <input type="number" id="codeCount" class="input" placeholder="Number of codes" value="5" min="1" max="50">
+          <button class="btn btn-success" onclick="generateCodes()">Generate Codes</button>
+        </div>
+        <div id="newCodes" class="new-codes hidden">
+          <h4>✅ New Codes Generated:</h4>
+          <div class="code-list" id="newCodeList"></div>
+        </div>
+      </div>
+      
+      <!-- All Codes -->
+      <div class="card">
+        <h2>📋 All Access Codes</h2>
+        <button class="btn" onclick="loadCodes()" style="margin-bottom: 16px;">Refresh</button>
+        <div id="codesList" class="codes-list">
+          <p style="color: #999;">No codes yet. Generate some!</p>
+        </div>
+      </div>
+      
+      <!-- Subscriptions -->
+      <div class="card">
+        <h2>👥 User Subscriptions</h2>
+        <button class="btn" onclick="loadSubscriptions()" style="margin-bottom: 16px;">Refresh</button>
+        <div style="overflow-x: auto;">
+          <table class="subscriptions-table">
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>Status</th>
+                <th>Expires</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="subscriptionsBody">
+              <tr>
+                <td colspan="4" style="text-align: center; color: #999;">No subscriptions yet</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Grant Manual Access -->
+      <div class="card">
+        <h2>🔓 Grant Manual Free Access</h2>
+        <div class="input-group">
+          <input type="text" id="grantUserId" class="input" placeholder="User ID to grant access">
+          <button class="btn btn-success" onclick="grantFreeAccess()">Grant Access</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // API URL - change this to your deployed backend URL
+    const API_URL = window.location.origin.includes('localhost') 
+      ? 'http://localhost:3001' 
+      : 'https://your-api-url.com';
+    
+    let authHeaders = {};
+    
+    function login() {
+      const userId = document.getElementById('userId').value.trim();
+      const userEmail = document.getElementById('userEmail').value.trim();
+      
+      if (!userId || !userEmail) {
+        alert('Please enter both User ID and Email');
+        return;
+      }
+      
+      if (userEmail !== 'stanley2551@gmail.com') {
+        alert('Access denied. Only the owner can access this panel.');
+        return;
+      }
+      
+      authHeaders = {
+        'x-user-id': userId,
+        'x-user-email': userEmail,
+        'Content-Type': 'application/json'
+      };
+      
+      // Verify access
+      fetch(`${API_URL}/api/subscription/status`, { headers: authHeaders })
+        .then(res => res.json())
+        .then(data => {
+          if (data.isOwner) {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('adminPanel').classList.remove('hidden');
+            loadCodes();
+            loadSubscriptions();
+          } else {
+            alert('Failed to verify owner status');
+          }
+        })
+        .catch(err => {
+          alert('Login failed: ' + err.message);
+        });
+    }
+    
+    function generateCodes() {
+      const count = parseInt(document.getElementById('codeCount').value) || 5;
+      
+      fetch(`${API_URL}/api/admin/generate-codes`, {
+        method: 'POST',
+        headers: authHeaders,
+        body: JSON.stringify({ count })
+      })
+        .then(res => res.json())
+        .then(data => {
+          const newCodesDiv = document.getElementById('newCodes');
+          const newCodeList = document.getElementById('newCodeList');
+          
+          newCodeList.innerHTML = data.codes.map(code => 
+            `<span class="code-item">${code}</span>`
+          ).join('');
+          
+          newCodesDiv.classList.remove('hidden');
+          loadCodes();
+        })
+        .catch(err => alert('Error: ' + err.message));
+    }
+    
+    function loadCodes() {
+      fetch(`${API_URL}/api/admin/codes`, { headers: authHeaders })
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('totalCodes').textContent = data.total;
+          document.getElementById('usedCodes').textContent = data.used;
+          document.getElementById('availableCodes').textContent = data.available;
+          
+          const codesList = document.getElementById('codesList');
+          if (data.codes.length === 0) {
+            codesList.innerHTML = '<p style="color: #999;">No codes yet. Generate some!</p>';
+          } else {
+            codesList.innerHTML = data.codes.map(c => `
+              <span class="code-tag ${c.used ? 'used' : 'available'}">
+                ${c.code}
+                <button onclick="revokeCode('${c.code}')" title="Revoke">×</button>
+              </span>
+            `).join('');
+          }
+        })
+        .catch(err => console.error('Error loading codes:', err));
+    }
+    
+    function revokeCode(code) {
+      if (!confirm(`Revoke code ${code}?`)) return;
+      
+      fetch(`${API_URL}/api/admin/revoke-code`, {
+        method: 'POST',
+        headers: authHeaders,
+        body: JSON.stringify({ code })
+      })
+        .then(() => loadCodes())
+        .catch(err => alert('Error: ' + err.message));
+    }
+    
+    function loadSubscriptions() {
+      fetch(`${API_URL}/api/admin/subscriptions`, { headers: authHeaders })
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('totalSubs').textContent = data.count;
+          
+          const tbody = document.getElementById('subscriptionsBody');
+          if (data.subscriptions.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">No subscriptions yet</td></tr>';
+          } else {
+            tbody.innerHTML = data.subscriptions.map(sub => {
+              const expires = sub.currentPeriodEnd 
+                ? new Date(sub.currentPeriodEnd).toLocaleDateString()
+                : (sub.freeAccess ? 'Never' : 'N/A');
+              
+              return `
+                <tr>
+                  <td style="font-family: monospace; font-size: 12px;">${sub.userId}</td>
+                  <td><span class="status-badge ${sub.status}">${sub.status}</span></td>
+                  <td>${expires}</td>
+                  <td>
+                    <button class="btn btn-danger" style="padding: 6px 12px; font-size: 12px;" 
+                      onclick="revokeAccess('${sub.userId}')">Revoke</button>
+                  </td>
+                </tr>
+              `;
+            }).join('');
+          }
+        })
+        .catch(err => console.error('Error loading subscriptions:', err));
+    }
+    
+    function revokeAccess(userId) {
+      if (!confirm('Revoke access for this user?')) return;
+      
+      fetch(`${API_URL}/api/admin/revoke-access`, {
+        method: 'POST',
+        headers: authHeaders,
+        body: JSON.stringify({ userId })
+      })
+        .then(() => loadSubscriptions())
+        .catch(err => alert('Error: ' + err.message));
+    }
+    
+    function grantFreeAccess() {
+      const userId = document.getElementById('grantUserId').value.trim();
+      if (!userId) {
+        alert('Please enter a User ID');
+        return;
+      }
+      
+      fetch(`${API_URL}/api/admin/grant-free`, {
+        method: 'POST',
+        headers: authHeaders,
+        body: JSON.stringify({ userId })
+      })
+        .then(res => res.json())
+        .then(data => {
+          alert(data.message);
+          document.getElementById('grantUserId').value = '';
+          loadSubscriptions();
+        })
+        .catch(err => alert('Error: ' + err.message));
+    }
+  </script>
+</body>
+</html>
